@@ -10,8 +10,8 @@ I have included latest jQuery and w2ui in the `src/libs` folder. You are welcome
 
 Clone github repository and open /src folder. This is where all front-end code is. You will find the following strucutre:
 
-```
-app             - all front-end code is here
+```sh
+/app            - all front-end code is here
   /less         - global less files
   /icons        - svg files for icons and generated icon font
   /main         - layout and main menus
@@ -36,7 +36,7 @@ gulp build     # bundles project into /build folder
 
 # Getting Started
 
-Open - `src/app/index.html` in the browser to see the app. The index file is minimal and provides generic structure for the applications layout, includes all necessary JS libraries and global css files.
+Open `src/app/index.html` in the browser to see the app. The index file is minimal and provides generic structure for the applications layout, includes all necessary JS libraries and global css files.
 
 All application logic start with `src/app/start.js` file. You can see annotated version of that file below.
 
@@ -63,18 +63,18 @@ $(function () {
 
 There will be one global variable `app` that holds references to all modules loaded for your application. Remember that modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the modules and it will get auto-loaded on that route pattern (one time). There are a few methods in app that are useful:
 
-### app.\_conf
+### *app.\_conf*
 Holds information about all registered modules and whether they are loaded or not.
 
-### app.define(module)
+### *app.define(module)*
 
 Defines a module and its assets. You can pass an object with module definition or a string. If it is a string it will assume it is a file path to module definitions. See /app/modules.js for a sample.
 
-### app.require(name, callBack)
+### *app.require(name, callBack)*
 
 Loads a module and its assets asyncronously. The name can be a string or an array of strings. And it will load a single module or a set of modules (all asynchronously) before executing the callBack. If you need to ensure specific order in which modules should be loaded - nest app.require() in the callBack of another app.required().
 
-### app.register(name, moduleFunction)
+### *app.register(name, moduleFunction)*
 
 Registers a module with name and its corresponding moduleFunction, which holds the logic of your module.
 Modules can be loaded automatically by setting up a route, if route pattern is defined in module definition. See /app/modules.js for an example.
@@ -86,7 +86,7 @@ Modules can be loaded automatically by setting up a route, if route pattern is d
 To create a new module, you need to do 2 things.
 
 ### 1. Create Module File
-Create a folder in `src/app` directory and name it mod1. Then create a file mod1.js in that directory with the following content.
+Create a folder in `src/app` directory and name it mod1. Then create a file `mod1.js` in that directory with the following content.
 ```js
 app.register('mod1', function (files) {
     // private scope
@@ -181,44 +181,9 @@ app.required('modName', function () {
 
 The `app.route` module is part of the boiler plater and immediately available. There are a number of methods and events available to you.
 
-### app.route.add(route, callBack)
-Adds a route to the routed and registeres its callBack.
+### *app.route.add(route, callBack)*
+Adds a route. You can add multiple at the same time if you pass an object to `add` method, where kye is the routes and value is its callBack
 
-### app.route.get()
-Returns currnet route.
-
-### app.route.go(route)
-Navigate to the route and triggers change enent.
-
-### app.route.init([defaultRoute])
-Initializes router module and sets defaultRoute.
-
-### app.route.list()
-Returns all registered routes.
-
-### app.route.remove(route)
-Removes specified route.
-
-### app.route.set(route)
-Sets route silently without triggering change events.
-
-## Events
-Events are only available is you include w2ui as it takes them from w2utils.
-
-### app.route.on('add', callBack)
-Event that is triggered when a new route is added. Callback function will receive an event object with additional information.
-
-### app.route.on('remove', callBack)
-Event that is triggered when a route is removed. Callback function will receive an event object with additional information.
-
-### app.route.on('route', callBack)
-Event that is triggered when a route is processed. Callback function will receive an event object with additional information
-
-## Example
-
-Routes should be added in the main module file, however a module might not be loaded yet. You can specify a pattern for module routes in the modules.js and if a route is not yet registered, but matches module pattern, then the module will be loaded automatically.
-
-Below is an example how to add routes:
 ```js
 app.route.add({
     // exact route
@@ -236,6 +201,50 @@ app.route.add({
 })
 ```
 
+### *app.route.get()*
+Returns currnet route.
+
+### *app.route.go(route)*
+Navigate to the route and triggers change enent.
+
+### *app.route.init([defaultRoute])*
+Initializes router module and sets defaultRoute.
+
+### *app.route.list()*
+Returns all registered routes.
+
+### *app.route.remove(route)*
+Removes specified route.
+
+### *app.route.set(route)*
+Sets route silently without triggering change events.
+
+## Events
+Events are only available is you include w2ui as it takes them from w2utils.
+
+### *app.route.on('add', callBack)*
+Event that is triggered when a new route is added. Callback function will receive an event object with additional information.
+
+### *app.route.on('remove', callBack)*
+Event that is triggered when a route is removed. Callback function will receive an event object with additional information.
+
+### *app.route.on('route', callBack)*
+Event that is triggered when a route is processed. Callback function will receive an event object with additional information
+
+## Example
+
+Routes should be added in the main module file, however a module might not be loaded yet. You can specify a pattern for module routes in the modules.js and if a route is not yet registered, but matches module pattern, then the module will be loaded automatically.
+
+```js
+"mod1": {
+    "assets": [
+       ...
+    ],
+    "route": "/mod1*",
+    "start": "app/mod1/mod1.js"
+}
+```
+In this example, the module will be auto loaded for any route that begins with `/mod1`
 
 # Application Layout
 
