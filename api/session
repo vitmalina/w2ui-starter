@@ -3,22 +3,5 @@
 		"fname": "Super",
 		"lname": "Admin"
 	},
-	"groups": [
-		{
-			"id": 1,
-			"group": "Admins"
-		}
-	],
-	"roles": [
-		{
-			"id": 1,
-			"role": "Admin"
-		}
-	],
-	"services": [
-		"/login",
-		"/logout",
-		"/user"
-	],
 	"status": "success"
 }
