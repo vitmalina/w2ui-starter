@@ -45,7 +45,7 @@ var tasks = {
     less: function (cb) {
         // all *.less in each modeule
         return gulp
-            .src(['src/app/**/*.less'])
+            .src(['src/app/**/*.less', '!src/app/less/**/*.less'])
             .pipe(less({ cleancss : true }))
             .on('error', function (err) {
                 console.log(err.toString());
