@@ -10,7 +10,7 @@ I have included latest jQuery and w2ui in the `src/libs` folder. You are welcome
 
 Clone github repository and open /src folder. This is where all front-end code is. You will find the following strucutre:
 
-```sh
+```
 /app            - all front-end code is here
   /less         - global less files
   /icons        - svg files for icons and generated icon font
@@ -123,7 +123,7 @@ Navigate to `index.html#/mod1` and your modules will be loaded and route event t
 ## Assets
 
 A module is a collection of related files (js, html, css, json, etc.) that implements a particular functionality. It should occupy its own folder where all the module files and resources are located. Below is the sample folder structure of the module that has many resources
-```sh
+```
 /app
   /mod1
     /views               - module resources
@@ -169,20 +169,21 @@ app.register('mod1', function (files) {
 
 ## Loading the Module
 
-The module will be loaded if you follow a module route or can be loaded directly with app.require method in the following way.
+The module will be loaded if browser opens the route defined for the module or can be loaded with `app.require` method in the following way.
 
 ```js
 app.required('modName', function () {
     // called when module and all its assets are loaded
 })
 ```
+Where first argument is name of the module from `modules.js` file (it can also be array of strings)
 
 # Routes
 
 The `app.route` module is part of the boiler plater and immediately available. There are a number of methods and events available to you.
 
 ### *app.route.add(route, callBack)*
-Adds a route. You can add multiple at the same time if you pass an object to `add` method, where kye is the routes and value is its callBack
+Adds a route. You can add multiple at the same time if you pass an object to `add` method, where key is the route and value is its callBack
 
 ```js
 app.route.add({
