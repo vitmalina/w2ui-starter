@@ -1,7 +1,3 @@
-# TODO
-- use `import` to import modules
-- use native css nesting and variables
-
 # w2ui-starter
 
 If you are using w2ui and looking for a small, non-oppininated way to organize your code - look no further. This repo is small, modular, easily extensible boiler plate to build apps with w2ui. It uses `ES6 Modules`.
@@ -64,7 +60,7 @@ window.app = app
 export default app
 ```
 
-## App Variatble
+## App Variable
 
 I like to expose `app` as a global variable, but it is up to you. I find it easier to debug and troubleshoot the application. Modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the modules and it will get auto-loaded on that route pattern (one time).
 
@@ -75,9 +71,7 @@ export default {
 }
 ````
 
-# Modules
-
-## Create New
+# ES6 Modules
 
 To create a new module, you need to do 2 things.
 
@@ -88,7 +82,7 @@ Create a folder in `src/app` directory and name it `mod1`. Then create a file `m
 import router from '../router.js'
 
 router.add({
-    "/mod1": function (event) {
+    "/mod1"(event) {
         w2ui.app_layout.html('left', w2ui.main_sidebar)
     }
 })
@@ -110,9 +104,9 @@ export default {
 ```
 Navigate to `index.html#/mod1` and your modules will be loaded and route event triggered.
 
-# Routes
+# Router
 
-The `app.router` is part of the boiler plater and immediately available. There are a number of methods and events available to you.
+The `app.router` is part of the boiler plater and immediately available. It allows to lazy-load `ES6` modules.
 
 ### *app.router.add(route, callBack)*
 Adds a route. You can add multiple at the same time if you pass an object to `add` method, where key is the route and value is its callBack
@@ -163,77 +157,3 @@ Event that is triggered when a route is removed. Callback function will receive 
 
 ### *app.router.on('route', callBack)*
 Event that is triggered when a route is processed. Callback function will receive an event object with additional information
-
-# Application Layout
-
-The main application layout is initialized on the start. By default all panels are defined, but only 3 are visible. The default layout is defined in `src/app/main/conf.js`. The layout is created using w2layout from w2ui library. See w2ui.com for more information.
-
-## Common Actions
-
-Show the right panel and render some HTML in it:
-```js
-w2ui.app_layout.show('right')
-w2ui.app_layout.html('right', '<div style="padding: 10px">Some HTML</div>')
-```
-
-Hide right panel:
-```js
-w2ui.app_layout.hide('right')
-```
-
-Load some HTML from a file into the right panel:
-```js
-w2ui.app_layout.show('right')
-w2ui.app_layout.load('right', 'path/to/the/file.html')
-```
-
-Chage size of the right panel and make it not resizable:
-```js
-w2ui.app_layout.set('right', { size: 150, resizable: false })
-w2ui.app_layout.show('right')
-```
-
-Display a grid in a main panel:
-```js
-w2ui.app_layout.content('main', w2ui.grid1)
-// Where grid1 is the name of the grid that you already initialized.
-```
-## Nested Layouts
-
-If you need more layout panels in the defaul application layout (not common), you may create additional layouts and nest them in the
-```js
-$().w2layout({
-    name: 'other_layout',
-    padding: 6,
-    panels: [
-        { type: 'top', size: 60, resizable: true },
-        { type: 'left', size: 150, resizable: true },
-        { type: 'main' },
-        { type: 'right', size: 150, resizable: true }
-    ]
-})
-w2ui.app_layout.html('main', w2ui.other_layout)
-```
-
-# Application Toolbar
-
-The main application toolbar is initialized on the start. You may change it to fit the needs of your application in `src/app/main/conf.js`. The toolbar is created using w2toolbar widget from w2ui library. See w2ui.com for more information.
-
-## Common Actions
-
-Add button to the toolbar:
-```js
-w2ui.app_toolbar.insert('spacer1',
-    { id: 'id1', type: 'button', caption: 'Button 1', icon: 'fa-star-empty' }
-)
-```
-
-Add item to the User menu:
-```js
-w2ui.app_toolbar.get('user-menu').items.push(
-    { id: 'my-item', text: 'My Item', icon: 'fa-home' }
-)
-w2ui.app_toolbar.refresh();
-```
-
-Thought you can customize toolbar any where in the code, it is probably better to define it in the /app/conf.js because it is unlikely your main toolbar will change during the course of the application.
