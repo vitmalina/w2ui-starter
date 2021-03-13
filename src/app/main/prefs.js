@@ -1,7 +1,7 @@
-app.main.prefs = {
+export default {
     data: {},
 
-    init: function (defaults) {
+    init(defaults) {
         // init preferences
         try {
             this.data = localStorage.getItem(app._conf.name + '-preferences')
@@ -15,13 +15,13 @@ app.main.prefs = {
         }
     },
 
-    set: function (name, value) {
+    set(name, value) {
         if (name == null) return
         this.data[name] = value
         localStorage.setItem(app._conf.name + '-preferences', JSON.stringify(this.data))
     },
 
-    get: function (name) {
+    get(name) {
         if (name == null) return null
         return this.data[name]
     }

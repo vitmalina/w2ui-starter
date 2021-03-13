@@ -1,7 +1,7 @@
 // ============================================
 // -- Application Configuration
 
-conf = {
+export default {
     // --- Application  Layout
     app_layout: {
         name: 'app_layout',
