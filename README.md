@@ -112,6 +112,12 @@ The `app.router` is part of the boiler plater and immediately available. It allo
 Adds a route. You can add multiple at the same time if you pass an object to `add` method, where key is the route and value is its callBack
 
 ```js
+// single route
+app.router.add("/home", (route, params) => {
+    console.log(route, params);
+})
+
+// many routes at once
 app.router.add({
     // exact route
     "/home"(route, params) {
