@@ -1,6 +1,6 @@
 # w2ui-starter
 
-If you are using w2ui and looking for a small, non-oppininated way to organize your code - look no further. This repo is small, modular, easily extensible boiler plate to build apps with w2ui. It uses `ES6 Modules`.
+This repo is small, modular, easily extensible boiler plate to build apps with w2ui. It uses `ES6 Modules`.
 
 The purpose of this repo is to be a starting point and provide structure. It is a front-end framework, so, no server side code included. There are a few static json files for you to play with. I have included latest jQuery and w2ui in the `src/libs` folder.
 
@@ -28,7 +28,7 @@ Open index.html in your browser and enjoy
 
 ## Gulp
 
-You will find `gulfile.js` in the project that configured to compile you LESS files, icon-font and bundle up your application. If you run gulp without params it will compile LESS files in place. You can also run
+Gulp is the task runner that can watch changes. It will compile you LESS files, icon-font and bundle up your application. If you run gulp without params it will compile LESS files in place. You can also run
 
 ```sh
 gulp dev       # start watching .less and .svg files
@@ -62,16 +62,32 @@ export default app
 
 ## App Variable
 
-I like to expose `app` as a global variable, but it is up to you. I find it easier to debug and troubleshoot the application. Modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the modules and it will get auto-loaded on that route pattern (one time).
+I like to expose `app` as a global variable, but it is up to you. I find it easier to debug and troubleshoot the application. 
 
-See `app/routes.js`. This file provides a way for lazy-loading files. If a route matches, it will load the module, even if it was not loaded before.
+## ES6 Modules
+
+The repo uses ES6 module pattern for the browser. Modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the modules and it will get auto-loaded when route triggers.
+
+See `app/routes.js`. This file provides a way for lazy-loading modules. If a route matches, it will load the module, even if it was not loaded before.
 ```js
 export default {
     "/home*": "app/main/main.js"
 }
 ````
+The wild card `*` can be used only here to trigger module whenever any module route is called. When defining routes, howeever, you can not use `*` wild card, but you can use variables in the route, for example
+```js
+import route from './router.js'
 
-# ES6 Modules
+router.add("/home/:mod/view/:section", (event) => {
+  console.log(event)
+ })
+ // this route will trigger for all of the following
+ // - /home/mod1/view/main
+ // - /home/users/view/1
+ // - /home/some-other-module/view/some-id
+```
+
+# Modules
 
 To create a new module, you need to do 2 things.
 
@@ -112,13 +128,15 @@ The `app.router` is part of the boiler plater and immediately available. It allo
 Adds a route. You can add multiple at the same time if you pass an object to `add` method, where key is the route and value is its callBack
 
 ```js
+import router from './router.js'
+
 // single route
-app.router.add("/home", (route, params) => {
+router.add("/home", (route, params) => {
     console.log(route, params);
 })
 
 // many routes at once
-app.router.add({
+router.add({
     // exact route
     "/home"(route, params) {
         console.log(route, params);
@@ -134,32 +152,52 @@ app.router.add({
 })
 ```
 
-### *app.router.get()*
+### router.get()
 Returns currnet route.
 
-### *app.router.go(route)*
+### router.go(route)
 Navigate to the route and triggers change enent.
+```js
+import router from './router.js'
+...
 
-### *app.router.init([defaultRoute])*
-Initializes router module and sets defaultRoute.
+router.go('/my/new/route')
+```
 
-### *app.router.list()*
+### router.init([defaultRoute])
+Initializes router module and sets defaultRoute. Used once in `app/start.js`
+
+### router.list()
 Returns all registered routes.
 
-### *app.router.remove(route)*
+### router.remove(route)
 Removes specified route.
 
-### *app.router.set(route)*
+### router.set(route)
 Sets route silently without triggering change events.
 
 ## Events
 Events are only available is you include w2ui as it takes them from w2utils.
 
-### *app.router.on('add', callBack)*
+### router.on('add', callBack)
 Event that is triggered when a new route is added. Callback function will receive an event object with additional information.
+```js
+import router from './router.js'
 
-### *app.router.on('remove', callBack)*
+router.on('add', (event) => {
+  console.log('A new route is added', event)
+})
+```
+
+### router.on('remove', callBack)
 Event that is triggered when a route is removed. Callback function will receive an event object with additional information.
 
-### *app.router.on('route', callBack)*
+### router.on('route', callBack)
 Event that is triggered when a route is processed. Callback function will receive an event object with additional information
+```js
+import router from './router.js'
+
+router.on('route', (event) => {
+  console.log('A route just got triggered', event)
+})
+```
