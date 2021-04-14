@@ -1,68 +1,68 @@
-const gulp      = require('gulp');
-const { exec }  = require("child_process");
-const header    = require('gulp-header');
-const iconfont  = require('gulp-iconfont');
-const less      = require('gulp-less');
-const uglify    = require('gulp-uglify');
+const gulp = require('gulp')
+const { exec } = require('child_process')
+const header = require('gulp-header')
+const iconfont = require('gulp-iconfont')
+const less = require('gulp-less')
+// const uglify = require('gulp-uglify')
 
-var tasks = {
+let tasks = {
 
-    clean: function (cb) {
+    clean(cb) {
         let commands = [
             'rm -rf build/'
         ]
         exec(commands.join('; '), (error, stdout, stderr) => {
             if (error) {
-                console.log(`error: ${error.message}`);
-                return;
+                console.log(`error: ${error.message}`)
+                return
             }
             if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                return;
+                console.log(`stderr: ${stderr}`)
+                return
             }
             cb()
         })
     },
 
-    build: function (cb) {
+    build(cb) {
         let commands = [
-            'mkdir -p build',  // only when does not exist
+            'mkdir -p build', // only when does not exist
             'tar -czf build/build.tar.gz api src/app src/libs src/index.html '
         ]
         exec(commands.join('; '), (error, stdout, stderr) => {
             if (error) {
-                console.log(`error: ${error.message}`);
-                return;
+                console.log(`error: ${error.message}`)
+                return
             }
             if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                return;
+                console.log(`stderr: ${stderr}`)
+                return
             }
             cb()
         })
     },
 
-    less: function (cb) {
+    less(cb) {
         // all *.less in each modeule
         return gulp
             .src(['src/app/**/*.less', '!src/app/less/**/*.less'])
             .pipe(less({ cleancss : true }))
             .on('error', function (err) {
-                console.log(err.toString());
-                this.emit('end');
+                console.log(err.toString())
+                this.emit('end')
             })
             .pipe(header('/* generated file, do not change */\n'))
-            .pipe(gulp.dest('src/app'));
+            .pipe(gulp.dest('src/app'))
     },
 
-    watch: function (cb) {
-        gulp.watch('src/app/**/*.less', tasks.less);
-        gulp.watch('src/app/icons/svg/*.svg', tasks.icons);
+    watch(cb) {
+        gulp.watch('src/app/**/*.less', tasks.less)
+        gulp.watch('src/app/icons/svg/*.svg', tasks.icons)
     },
 
-    icons: function (cb) {
-        var fs  = require('fs');
-        var css = '@font-face {\n' +
+    icons(cb) {
+        let fs = require('fs')
+        let css = '@font-face {\n' +
                   '    font-family: "icon-font";\n' +
                   '    src: url("icon-font.woff?'+ (new Date()).getTime() +'");\n' +
                   '    font-weight: normal;\n' +
@@ -82,8 +82,8 @@ var tasks = {
                   '    text-rendering: optimizeLegibility;\n' +
                   '    -webkit-font-smoothing: antialiased;\n' +
                   '    -moz-osx-font-smoothing: grayscale;\n' +
-                  '}\n';
-        var html = '<!doctype html>\n'+
+                  '}\n'
+        let html = '<!doctype html>\n'+
                    '<html>\n'+
                    '<head>\n'+
                    '    <meta charset="utf-8">\n'+
@@ -97,8 +97,8 @@ var tasks = {
                    '    </style>\n' +
                    '</head>\n'+
                    '<body>\n'+
-                   '    <h1 style="font-family: arial; padding-left: 15px;">icon-font $count</h1>';
-        var json = [];
+                   '    <h1 style="font-family: arial; padding-left: 15px;">icon-font $count</h1>'
+        let json = []
 
         return gulp.src(['src/app/icons/svg/*.svg'])
             .pipe(iconfont({
@@ -111,34 +111,32 @@ var tasks = {
                 timestamp: Math.round(Date.now()/1000)
             }))
             .on('error', function (err) {
-                this.emit('end');
+                this.emit('end')
             })
             .on('glyphs', function(icons, options) {
-                let n = 0;
-                icons = icons.sort((a, b) => (a.name > b.name) - (a.name < b.name)); // need reorder f series
-                var cnt = 0;
-                icons.forEach(function(icon, i) {
-                    let unicode = icon.unicode;
+                icons = icons.sort((a, b) => (a.name > b.name) - (a.name < b.name)) // need reorder f series
+                icons.forEach((icon, i) => {
+                    let unicode = icon.unicode
                     html += '<div class="preview">\n'+
                             '   <span class="icon icon-'+ icons[i].name +'"></span>\n'+
                             '   <span>icon-'+ icons[i].name +'</span>\n'+
-                            '</div>\n';
-                    css  += '.icon-'+ icons[i].name + ':before { content: "\\' + unicode.toString(16) + '" }\n';
-                    json.push(icons[i].name);
-                });
+                            '</div>\n'
+                    css += '.icon-'+ icons[i].name + ':before { content: "\\' + unicode.toString(16) + '" }\n'
+                    json.push(icons[i].name)
+                })
 
-                html += '<div style="clear: both; height: 10px;"></div></body>\n</html>';
-                html = html.replace('$count', ' - ' + icons.length + ' icons');
-                fs.writeFileSync('src/app/icons/icon-font.css', css);
-                fs.writeFileSync('src/app/icons/preview.html', html);
-                fs.writeFileSync('src/app/icons/icons.json', JSON.stringify(json));
+                html += '<div style="clear: both; height: 10px;"></div></body>\n</html>'
+                html = html.replace('$count', ' - ' + icons.length + ' icons')
+                fs.writeFileSync('src/app/icons/icon-font.css', css)
+                fs.writeFileSync('src/app/icons/preview.html', html)
+                fs.writeFileSync('src/app/icons/icons.json', JSON.stringify(json))
             })
-            .pipe(gulp.dest('src/app/icons/'));
+            .pipe(gulp.dest('src/app/icons/'))
     }
 }
 
 exports.default = gulp.series(tasks.clean, tasks.less)
-exports.dev     = tasks.watch
-exports.less    = tasks.less
-exports.icons   = tasks.icons
-exports.build   = gulp.series(tasks.clean, tasks.less, tasks.build)
+exports.dev = tasks.watch
+exports.less = tasks.less
+exports.icons = tasks.icons
+exports.build = gulp.series(tasks.clean, tasks.less, tasks.build)

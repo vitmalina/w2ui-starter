@@ -62,7 +62,7 @@ function remove(route) {
     route = String('/'+route).replace(/\/{2,}/g, '/')
     // if events are available
     if (typeof router.trigger == 'function') {
-        edata = router.trigger({ phase: 'before', type: 'remove', target: 'self', route: route, handler: handler })
+        edata = router.trigger({ phase: 'before', type: 'remove', target: 'self', route: route })
         if (edata.isCancelled === true) return false
     }
     // default behavior
@@ -92,8 +92,6 @@ function get() {
 
 function info() {
     let matches = []
-    let isFound = false
-    let isExact = false
     // match routes
     let hash = window.location.hash.substr(1).replace(/\/{2,}/g, '/')
     if (hash == '') hash = '/'
@@ -102,10 +100,6 @@ function info() {
         let params = {}
         let tmp = routeRE[r].path.exec(hash)
         if (tmp != null) { // match
-            isFound = true
-            if (!isExact && r.indexOf('*') === -1 && r.indexOf('/:') === -1) {
-                isExact = true
-            }
             let i = 1
             for (let p in routeRE[r].keys) {
                 params[routeRE[r].keys[p].name] = tmp[i]
@@ -122,10 +116,10 @@ function list() {
     prepare()
     let res = {}
     Object.keys(routes).forEach(r => {
-        let tmp  = routeRE[r].keys
+        let tmp = routeRE[r].keys
         let keys = []
         Object.keys(tmp).forEach(t => {
-           keys.push(tmp[t].name)
+            keys.push(tmp[t].name)
         })
         res[r] = keys
     })
@@ -147,7 +141,7 @@ function process() {
         let edata
         if (tmp != null) { // match
             isFound = true
-            if (!isExact && r.indexOf('*') === -1) {
+            if (!isExact && r.indexOf('*') === -1 && r.indexOf('/:') === -1) {
                 isExact = true
             }
             let i = 1
@@ -161,7 +155,7 @@ function process() {
                 if (edata.isCancelled === true) return false
             }
             // default handler
-            let res = routes[r]({ name: r, path: hash, params: params }, params)
+            routes[r]({ name: r, path: hash, params: params }, params)
             // if events are available
             if (typeof router.trigger == 'function') router.trigger(Object.assign(edata, { phase: 'after' }))
             // if hash changed (for example in handler), then do not process rest of old processings
@@ -173,8 +167,7 @@ function process() {
     if (!isExact) {
         Object.keys(modules).forEach(route => {
             let mod = { route: route, path: modules[route] }
-            let rt  = mod.route
-            let nearMatch = false
+            let rt = mod.route
             if (rt != null) {
                 if (typeof rt == 'string') rt = [rt]
                 if (Array.isArray(rt)) {
@@ -192,11 +185,11 @@ function process() {
                     })
                     if (!isLoaded) {
                         isAutoLoad = true
-                        let child = document.createElement("script")
-                        child.type = "module"
+                        let child = document.createElement('script')
+                        child.type = 'module'
                         child.src = mod.path
                         child.path = mod.path
-                        child.onload = () => { router.go(router.get()) }
+                        child.onload = (event) => { router.go(router.get()) }
                         document.head.appendChild(child)
                         if (router.verbose) console.log(`ROUTER: Auto Load Module "${mod.path}" for path "${mod.route}"`)
                     }
@@ -238,12 +231,12 @@ function prepare(r) {
         let path = r
             .replace(/\/\(/g, '(?:/')
             .replace(/\+/g, '__plus__')
-            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional) {
+            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, (_, slash, format, key, capture, optional) => {
                 keys.push({ name: key, optional: !! optional })
                 slash = slash || ''
                 return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '')
             })
-            .replace(/([\/.])/g, '\\$1')
+            .replace(/([/.])/g, '\\$1')
             .replace(/__plus__/g, '(.+)')
             .replace(/\*/g, '(.*)')
         return {
@@ -258,13 +251,5 @@ function addListener() {
         window.addEventListener('hashchange', process, false)
     } else {
         window.attachEvent('onhashchange', process)
-    }
-}
-
-function removeListener() {
-    if (window.removeEventListener) {
-        window.removeEventListener('hashchange', process)
-    } else {
-        window.detachEvent('onhashchange', process)
     }
 }

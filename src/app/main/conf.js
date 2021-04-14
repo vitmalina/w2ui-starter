@@ -49,11 +49,11 @@ export default {
         flatButton: true,
         onFlat: function (event) {
             if (event.goFlat == true) {
-                w2ui.app_layout.set('left', { size: 35, minSize: 35, resizable: false });
-                app.main.prefs.set('ui-sidebar-size', 'small');
+                w2ui.app_layout.set('left', { size: 35, minSize: 35, resizable: false })
+                app.main.prefs.set('ui-sidebar-size', 'small')
             } else {
-                w2ui.app_layout.set('left', { size: 185, minSize: 100, resizable: true });
-                app.main.prefs.set('ui-sidebar-size', 'large');
+                w2ui.app_layout.set('left', { size: 185, minSize: 100, resizable: true })
+                app.main.prefs.set('ui-sidebar-size', 'large')
             }
         },
         onRender: function (event) {

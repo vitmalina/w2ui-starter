@@ -13,16 +13,16 @@ $('#app-container').fadeIn(50)
 
 app.router.add({
 
-    "/home*"(event) {
+    '/home*'(event) {
         w2ui.app_layout.html('left', w2ui.main_sidebar)
     },
 
-    "/home"(event) {
+    '/home'(event) {
         w2ui.main_sidebar.select('home')
         w2ui.app_layout.html('main', w2ui.main_grid)
     },
 
-    "/home/projects"(event) {
+    '/home/projects'(event) {
         w2ui.main_sidebar.select('projects')
         w2ui.app_layout.html('main', `
             <div class="w2ui-centered" style="font-size: 16px; color: gray">
