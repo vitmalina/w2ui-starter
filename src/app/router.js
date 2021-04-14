@@ -103,7 +103,7 @@ function info() {
         let tmp = routeRE[r].path.exec(hash)
         if (tmp != null) { // match
             isFound = true
-            if (!isExact && r.indexOf('*') === -1) {
+            if (!isExact && r.indexOf('*') === -1 && r.indexOf('/:') === -1) {
                 isExact = true
             }
             let i = 1
@@ -196,6 +196,7 @@ function process() {
                         child.type = "module"
                         child.src = mod.path
                         child.path = mod.path
+                        child.onload = () => { router.go(router.get()) }
                         document.head.appendChild(child)
                         if (router.verbose) console.log(`ROUTER: Auto Load Module "${mod.path}" for path "${mod.route}"`)
                     }

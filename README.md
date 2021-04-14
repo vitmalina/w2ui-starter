@@ -62,24 +62,22 @@ export default app
 
 ## App Variable
 
-I like to expose `app` as a global variable, but it is up to you. I find it easier to debug and troubleshoot the application. 
+I like to expose `app` as a global variable, but it is up to you. I find it easier to debug and troubleshoot the application. Modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the module and it will auto-load when pattern triggers (one time).
 
-## ES6 Modules
-
-The repo uses ES6 module pattern for the browser. Modules are lazy-loaded, which means they do not get all loaded on start. You may define a route pattern for the modules and it will get auto-loaded when route triggers.
-
-See `app/routes.js`. This file provides a way for lazy-loading modules. If a route matches, it will load the module, even if it was not loaded before.
+See `app/routes.js`.
 ```js
 export default {
-    "/home*": "app/main/main.js"
+    "/home*": "app/main/main.js" // load when path starts with #/home
 }
 ````
 The wild card `*` can be used only here to trigger module whenever any module route is called. When defining routes, howeever, you can not use `*` wild card, but you can use variables in the route, for example
 ```js
 import route from './router.js'
 
-router.add("/home/:mod/view/:section", (event) => {
-  console.log(event)
+router.add({
+    "/home/:mod/view/:section"(event) {
+        console.log(event)
+    }
  })
  // this route will trigger for all of the following
  // - /home/mod1/view/main
@@ -87,7 +85,7 @@ router.add("/home/:mod/view/:section", (event) => {
  // - /home/some-other-module/view/some-id
 ```
 
-# Modules
+# ES 6 Modules
 
 To create a new module, you need to do 2 things.
 
